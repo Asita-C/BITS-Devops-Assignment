@@ -7,8 +7,7 @@ pipeline {
  // Checkout code from Git repository
  checkout([$class: 'GitSCM',
  branches: [[name: '*/main']], name
- userRemoteConfigs: [[url: 'https://
-https://github.com/Asita-C/BITS-Devops-Assignment ']]])
+ userRemoteConfigs: [[url: 'https://github.com/Asita-C/BITS-Devops-Assignment ']]])
  }
  }
 
