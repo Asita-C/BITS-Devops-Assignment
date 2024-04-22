@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from Git repository
-                git 'https://github.com/Asita-C/BITS-Devops-Assignment.git'
+                git 'https://github.com/Asita-C/BITS-Devops-Assignment'
             }
         }
         
