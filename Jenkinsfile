@@ -14,7 +14,8 @@ pipeline {
         stage('Build and Compile') {
             steps {
                 // Use Maven to build and compile the project
-                sh 'mvn clean compile'
+                withMaven(maven: 'MavenInstallationName')
+                    sh 'mvn clean compile'
             }
 
             post {
