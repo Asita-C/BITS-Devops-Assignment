@@ -1,34 +1,41 @@
 pipeline {
-    agent any // Runs the pipeline on any available agent
-   
+    agent any
+
     stages {
         stage('Checkout') {
             steps {
                 // Checkout code from Git repository
-                git 'https://github.com/Asita-C/BITS-Devops-Assignment.git'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: '*/main']],
+                          userRemoteConfigs: [[url: 'https://github.com/Asita-C/BITS-Devops-Assignment']]])
             }
         }
-        
+
         stage('Build and Compile') {
             steps {
-                // Your build and compile commands here
-                sh 'mvn clean compile' // Example Maven build and compile command
+                // Use Maven to build and compile the project
+                sh 'mvn clean compile'
+            }
+
+            post {
+                success {
+                    // If build succeeds, archive the build artifacts
+                    archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
+                }
+
+                failure {
+                    // If build fails, send a notification or take other actions
+                    echo 'Build failed! Please check the build logs.'
+                }
             }
         }
     }
-    
+
+    // Post-build actions (optional)
     post {
         always {
-            // Cleanup steps if needed
-            echo 'Pipeline execution completed!'
-        }
-        success {
-            // Notification or further actions on success
-            echo 'Build successful!'
-        }
-        failure {
-            // Notification or further actions on failure
-            echo 'Build failed!'
+            // Clean up workspace after the build is complete
+            cleanWs()
         }
     }
 }
