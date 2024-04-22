@@ -5,33 +5,37 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout code from Git repository
-                git 'https://github.com/Asita-C/BITS-Devops-Assignment'
+                checkout([$class: 'GitSCM', 
+                         branches: [[name: 'main']], 
+                         userRemoteConfigs: [[url: 'https://github.com/Asita-C/BITS-Devops-Assignment']]])
             }
         }
         
         stage('Build and Compile') {
             steps {
-                script {
-                    // Use Maven for build and compilation
-                    withMaven(maven: 'MavenInstallationName') {
-                        sh 'mvn clean compile'
-                    }
+                // Use Maven to build and compile the project
+                sh 'mvn clean compile'
+            }
+            
+            post {
+                success {
+                    // If build succeeds, archive the build artifacts
+                    archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
+                }
+                
+                failure {
+                    // If build fails, send a notification or take other actions
+                    echo 'Build failed! Please check the build logs.'
                 }
             }
         }
     }
     
+    // Post-build actions (optional)
     post {
-        success {
-            // Send a success notification (optional)
-            echo 'Build and compilation succeeded!'
-            // You can add additional steps like sending email notifications, etc.
-        }
-        
-        failure {
-            // Send a failure notification (optional)
-            echo 'Build or compilation failed!'
-            // You can add additional steps like sending email notifications, etc.
+        always {
+            // Clean up workspace after the build is complete
+            cleanWs()
         }
     }
 }
